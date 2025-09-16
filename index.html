@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PPA Principles Impact on Tariff</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background-color: #f4f4f4;
+    }
+    h2 {
+      text-align: center;
+    }
+    .slider-container {
+      margin: 20px 0;
+    }
+    label {
+      font-weight: bold;
+    }
+    .sliders {
+      max-width: 600px;
+      margin: auto;
+    }
+    canvas {
+      max-width: 700px;
+      margin: 40px auto;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <h2>PPA Principles Impact on Tariff</h2>
+  <div class="sliders">
+    <div class="slider-container">
+      <label for="tenorSlider">Tenor: <span id="tenorValue">5</span></label>
+      <input type="range" min="1" max="10" value="5" id="tenorSlider">
+    </div>
+    <div class="slider-container">
+      <label for="deliverySlider">Delivery Commitment: <span id="deliveryValue">5</span></label>
+      <input type="range" min="1" max="10" value="5" id="deliverySlider">
+    </div>
+    <div class="slider-container">
+      <label for="securitySlider">Security: <span id="securityValue">5</span></label>
+      <input type="range" min="1" max="10" value="5" id="securitySlider">
+    </div>
+    <div class="slider-container">
+      <label for="flexibilitySlider">Flexibility: <span id="flexibilityValue">5</span></label>
+      <input type="range" min="1" max="10" value="5" id="flexibilitySlider">
+    </div>
+  </div>
+
+  <canvas id="tariffChart"></canvas>
+
+  <script>
+    const ctx = document.getElementById('tariffChart').getContext('2d');
+    const baseTariff = 100;
+
+    const chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['Tenor', 'Delivery Commitment', 'Security', 'Flexibility'],
+        datasets: [{
+          label: 'Tariff (c/kWh)',
+          data: [0, 0, 0, 0],
+          backgroundColor: 'rgba(54, 162, 235, 0.2)',
+          borderColor: 'rgba(54, 162, 235, 1)',
+          borderWidth: 2,
+          fill: true,
+          tension: 0.4
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Tariff (c/kWh)'
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: 'PPA Principles'
+            }
+          }
+        }
+      }
+    });
+
+    function updateChart() {
+      const tenor = parseInt(document.getElementById('tenorSlider').value);
+      const delivery = parseInt(document.getElementById('deliverySlider').value);
+      const security = parseInt(document.getElementById('securitySlider').value);
+      const flexibility = parseInt(document.getElementById('flexibilitySlider').value);
+
+      document.getElementById('tenorValue').innerText = tenor;
+      document.getElementById('deliveryValue').innerText = delivery;
+      document.getElementById('securityValue').innerText = security;
+      document.getElementById('flexibilityValue').innerText = flexibility;
+
+      chart.data.datasets[0].data = [
+        baseTariff / tenor,
+        baseTariff / delivery,
+        baseTariff / security,
+        baseTariff / flexibility
+      ];
+      chart.update();
+    }
+
+    document.querySelectorAll('input[type=range]').forEach(slider => {
+      slider.addEventListener('input', updateChart);
+    });
+
+    updateChart(); // Initial chart render
+  </script>
+</body>
+</html>
